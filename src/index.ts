@@ -17,13 +17,16 @@ export default {
                 return new Response("Missing 'word' parameter", { status: 400, headers: corsHeaders });
             }
 
-            // 发起请求，禁用缓存
+            // 发起请求，记录时间
+            const startTime = performance.now();
             const gotResp = await QueryCibaJson(word)
+            const fnCostTime = performance.now() - startTime
+            console.log(`Func ${QueryCibaJson.name} Cost Time: ${fnCostTime}ms`);
+
             // 根据返回的 Content-Type 判断处理方式
             const contentType = gotResp.headers.get("content-type") || "";
             let responseBody;
             if (contentType.includes("application/json")) {
-                // 如果返回 JSON，则调用 json() 并 stringify 后返回
                 responseBody = JSON.stringify(await gotResp.json());
             } else {
                 responseBody = await gotResp.text();
@@ -70,16 +73,14 @@ async function SendReqGet(targetUrl: string) {
 }
 
 
+/** 300ms */
 async function QueryCibaJson(word: string) {
-    const targetUrl = `https://www.iciba.com/_next/data/NW4LYCQTPmcJk1wISQx_s/word.json?w=${encodeURIComponent(word)}`;
+    const buildId = "OPeO-bTu_2jVUKMSaH9b0"  // 更新时间 2025-02-07 18:57:44
+    const targetUrl = `https://www.iciba.com/_next/data/${buildId}/word.json?w=${encodeURIComponent(word)}`;
     return SendReqGet(targetUrl)
 }
 
 
-async function QueryCiba(word: string) {
-    const targetUrl = `https://www.iciba.com/word?w=${encodeURIComponent(word)}`;
-    return SendReqGet(targetUrl)
-}
 
 async function QueryBing(word: string) {
     const targetUrl = `https://cn.bing.com/dict/search?q=${encodeURIComponent(word)}`;

@@ -2,6 +2,7 @@
 
 打印的日志是在终端里。
 
+本地启动 npm run dev
 
 部署代码 npm run deploy
 
