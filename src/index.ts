@@ -23,14 +23,16 @@ export default {
             const fnCostTime = performance.now() - startTime
             console.log(`Func ${QueryCibaJson.name} Cost Time: ${fnCostTime}ms`);
 
-            // 根据返回的 Content-Type 判断处理方式
+            // 拼装数据 根据返回的 Content-Type 判断处理方式
             const contentType = gotResp.headers.get("content-type") || "";
-            let responseBody;
+            let respData;
             if (contentType.includes("application/json")) {
-                responseBody = JSON.stringify(await gotResp.json());
+                respData = await gotResp.json();
             } else {
-                responseBody = await gotResp.text();
+                respData = await gotResp.text();
             }
+
+            const responseBody = JSON.stringify({query: word, costTime:fnCostTime, data: respData});
 
             // 设置响应头（附加 CORS）
             const responseHeaders = new Headers(gotResp.headers);
